@@ -1,0 +1,6 @@
+DATE = "15:15:25 January 24, 2021"
+QUARTUS_VERSION = "14.0"
+
+# Revisions
+
+PROJECT_REVISION = "GPU"
