@@ -8,15 +8,15 @@ module RasterPipelineEX3(
   input `FIXPT            i_w1,
   input `FIXPT            i_w2,
   input `FIXPT            i_w3,
-  input [7:0]        			i_r,
-  input [7:0]        			i_g,
-  input [7:0]        			i_b,
-  input `FIXPT			      i_v1_u,
-  input `FIXPT			      i_v1_v,
-  input `FIXPT			      i_v2_u,
-  input `FIXPT			      i_v2_v,
-  input `FIXPT			      i_v3_u,
-  input `FIXPT			      i_v3_v,
+  input [7:0]             i_r,
+  input [7:0]             i_g,
+  input [7:0]             i_b,
+  input `FIXPT            i_v1_u,
+  input `FIXPT            i_v1_v,
+  input `FIXPT            i_v2_u,
+  input `FIXPT            i_v2_v,
+  input `FIXPT            i_v3_u,
+  input `FIXPT            i_v3_v,
   output reg              o_write_pixel,
   output reg signed[15:0] o_x,
   output reg signed[15:0] o_y,
@@ -24,8 +24,8 @@ module RasterPipelineEX3(
   output reg [7:0]        o_g,
   output reg [7:0]        o_b
 );
-	
-	parameter PIPELINE_WIDTH = 4;
+  
+  parameter PIPELINE_WIDTH = 4;
   wire valid;
 
   reg signed [15:0] x_pipe[0:PIPELINE_WIDTH];
@@ -37,22 +37,22 @@ module RasterPipelineEX3(
   integer i;
   always @(posedge i_clk)
   begin
-  	if (i_write_enable)
-  	begin
-  		r_pipe[0] <= i_r;
-  		g_pipe[0] <= i_g;
-  		b_pipe[0] <= i_b;
-  		x_pipe[0] <= i_x_pos;
-  		y_pipe[0] <= i_y_pos;
-  	end
-  	for (i = 1; i <= PIPELINE_WIDTH; i = i + 1)
-  	begin
-  		r_pipe[i] <= r_pipe[i - 1];
-  		g_pipe[i] <= g_pipe[i - 1];
-  		b_pipe[i] <= b_pipe[i - 1];
-  		x_pipe[i] <= x_pipe[i - 1];
-			y_pipe[i] <= y_pipe[i - 1];
-  	end
+    if (i_write_enable)
+    begin
+      r_pipe[0] <= i_r;
+      g_pipe[0] <= i_g;
+      b_pipe[0] <= i_b;
+      x_pipe[0] <= i_x_pos;
+      y_pipe[0] <= i_y_pos;
+    end
+    for (i = 1; i <= PIPELINE_WIDTH; i = i + 1)
+    begin
+      r_pipe[i] <= r_pipe[i - 1];
+      g_pipe[i] <= g_pipe[i - 1];
+      b_pipe[i] <= b_pipe[i - 1];
+      x_pipe[i] <= x_pipe[i - 1];
+      y_pipe[i] <= y_pipe[i - 1];
+    end
   end
 
   pipeline_ctrl #(PIPELINE_WIDTH) pc(
@@ -93,11 +93,11 @@ module RasterPipelineEX3(
 
   always @(posedge i_clk)
   begin
-  	if (i_write_enable)
-  	begin
-  		texel_address_ff <= texel_address;
-  	end
-  	clut_index_ff <= clut_index;
+    if (i_write_enable)
+    begin
+      texel_address_ff <= texel_address;
+    end
+    clut_index_ff <= clut_index;
   end
 
   TextureUnit texel_unit(
@@ -140,10 +140,10 @@ module RasterPipelineEX3(
     begin
       o_write_pixel <= 0;
       o_x <= 32'bx;
-			o_y <= 32'bx;
-			o_r <= 32'bx;
-			o_g <= 32'bx;
-			o_b <= 32'bx;
+      o_y <= 32'bx;
+      o_r <= 32'bx;
+      o_g <= 32'bx;
+      o_b <= 32'bx;
     end
   end
 

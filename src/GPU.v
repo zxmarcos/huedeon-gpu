@@ -9,274 +9,281 @@
 
 module GPU(
 
-	//////////// CLOCK //////////
-	input 		          		CLOCK_50,
+  //////////// CLOCK //////////
+  input                   CLOCK_50,
 /*
-  input 		          		CLOCK2_50,
-	input 		          		CLOCK3_50,
-	input 		          		CLOCK4_50,
+  input                   CLOCK2_50,
+  input                   CLOCK3_50,
+  input                   CLOCK4_50,
 
-	//////////// SDRAM //////////
-	output		    [12:0]		DRAM_ADDR,
-	output		     [1:0]		DRAM_BA,
-	output		          		DRAM_CAS_N,
-	output		          		DRAM_CKE,
-	output		          		DRAM_CLK,
-	output		          		DRAM_CS_N,
-	inout 		    [15:0]		DRAM_DQ,
-	output		          		DRAM_LDQM,
-	output		          		DRAM_RAS_N,
-	output		          		DRAM_UDQM,
-	output		          		DRAM_WE_N,
+  //////////// SDRAM //////////
+  output        [12:0]    DRAM_ADDR,
+  output         [1:0]    DRAM_BA,
+  output                  DRAM_CAS_N,
+  output                  DRAM_CKE,
+  output                  DRAM_CLK,
+  output                  DRAM_CS_N,
+  inout         [15:0]    DRAM_DQ,
+  output                  DRAM_LDQM,
+  output                  DRAM_RAS_N,
+  output                  DRAM_UDQM,
+  output                  DRAM_WE_N,
 */
-	//////////// SEG7 //////////
-	output		     [6:0]		HEX0,
-	output		     [6:0]		HEX1,
-	output		     [6:0]		HEX2,
-	output		     [6:0]		HEX3,
-	output		     [6:0]		HEX4,
-	output		     [6:0]		HEX5,
+  //////////// SEG7 //////////
+  output         [6:0]    HEX0,
+  output         [6:0]    HEX1,
+  output         [6:0]    HEX2,
+  output         [6:0]    HEX3,
+  output         [6:0]    HEX4,
+  output         [6:0]    HEX5,
 
-	//////////// KEY //////////
-	input 		     [3:0]		KEY,
+  //////////// KEY //////////
+  input          [3:0]    KEY,
 
-	//////////// LED //////////
-	output		     [9:0]		LEDR,
+  //////////// LED //////////
+  output         [9:0]    LEDR,
 /*
-	//////////// SW //////////
-	input 		     [9:0]		SW,
+  //////////// SW //////////
+  input          [9:0]    SW,
 */
-	//////////// VGA //////////
-	output		     [7:0]		VGA_B,
-	output		          		VGA_BLANK_N,
-	output		          		VGA_CLK,
-	output		     [7:0]		VGA_G,
-	output		          		VGA_HS,
-	output		     [7:0]		VGA_R,
-	output		          		VGA_SYNC_N,
-	output		          		VGA_VS
+  //////////// VGA //////////
+  output         [7:0]    VGA_B,
+  output                  VGA_BLANK_N,
+  output                  VGA_CLK,
+  output         [7:0]    VGA_G,
+  output                  VGA_HS,
+  output         [7:0]    VGA_R,
+  output                  VGA_SYNC_N,
+  output                  VGA_VS
 );
-	wire clk25, clk4;
-	
-	CLKDivider clkdiv(.clk(CLOCK_50), .clkdiv2(clk25), .clkdiv16(clk4));
-	
-	wire [9:0] x;
-	wire [9:0] y;
-	wire hsync, vsync, visible;
-	wire xmax, ymax;
-	
-	reg [7:0] r_color;
-	reg [7:0] g_color;
-	reg [7:0] b_color;
-	
-	assign VGA_R = r_color;
-	assign VGA_B = b_color;
-	assign VGA_G = g_color;
-	assign VGA_BLANK_N = 1'b1;
-	assign VGA_SYNC_N = 1'b0;
-	assign VGA_HS = hsync;
-	assign VGA_VS = vsync;
-	assign VGA_CLK = clk25;
-	
-	VGAEncoder vga(
-		.clk(clk25),
-		.x(x),
-		.y(y),
-		.hsync(hsync),
-		.vsync(vsync),
-		.visible(visible),
-		.xmax(xmax),
-		.ymax(ymax)
-	);
-	
-	
+  wire clk25, clk4;
+  
+  CLKDivider clkdiv(.clk(CLOCK_50), .clkdiv2(clk25), .clkdiv16(clk4));
+  
+  wire [9:0] x;
+  wire [9:0] y;
+  wire hsync, vsync, visible;
+  wire xmax, ymax;
+  
+  reg [7:0] r_color;
+  reg [7:0] g_color;
+  reg [7:0] b_color;
+  
+  assign VGA_R = r_color;
+  assign VGA_B = b_color;
+  assign VGA_G = g_color;
+  assign VGA_BLANK_N = 1'b1;
+  assign VGA_SYNC_N = 1'b0;
+  assign VGA_HS = hsync;
+  assign VGA_VS = vsync;
+  assign VGA_CLK = clk25;
+  
+  VGAEncoder vga(
+    .clk(clk25),
+    .x(x),
+    .y(y),
+    .hsync(hsync),
+    .vsync(vsync),
+    .visible(visible),
+    .xmax(xmax),
+    .ymax(ymax)
+  );
+  
+  
 
-	reg [16:0] vram_pix_address;
-	reg [16:0] vram_row_address;
-	reg [15:0] pixel;
-	wire [15:0] wpixel;
-	
-	//=======================================================
-	
-	reg signed [13:0] x1 = 10;
-	reg signed [13:0] y1 = 10;
-	reg signed [13:0] x2 = 50;
-	reg signed [13:0] y2 = 200;
-	reg signed [13:0] x3 = 300;
-	reg signed [13:0] y3 = 140;
+  reg [16:0] vram_pix_address;
+  reg [16:0] vram_row_address;
+  reg [15:0] pixel;
+  wire [15:0] wpixel;
+  
+  //=======================================================
+  
+  reg signed [13:0] x1 = 10;
+  reg signed [13:0] y1 = 10;
+  reg signed [13:0] x2 = 50;
+  reg signed [13:0] y2 = 200;
+  reg signed [13:0] x3 = 300;
+  reg signed [13:0] y3 = 140;
 
-	reg [7:0] r1 = 255;
-	reg [7:0] r2 = 120;
-	reg [7:0] r3 = 30;
+  reg [7:0] r1 = 255;
+  reg [7:0] r2 = 120;
+  reg [7:0] r3 = 30;
 
-	reg [7:0] g1 = 100;
-	reg [7:0] g2 = 255;
-	reg [7:0] g3 = 22;
+  reg [7:0] g1 = 100;
+  reg [7:0] g2 = 255;
+  reg [7:0] g3 = 22;
 
-	reg [7:0] b1 = 24;
-	reg [7:0] b2 = 100;
-	reg [7:0] b3 = 255;
-	
-	
+  reg [7:0] b1 = 24;
+  reg [7:0] b2 = 100;
+  reg [7:0] b3 = 255;
+  
+  
 
-	wire writePixel;
-	
-	
-	wire [15:0] adrX;
-	wire [15:0] adrY;
-	
-	wire [16:0] rasterAddress = (adrY*320) + adrX;
-	reg [15:0] xColor = 15'hC0;
+  wire writePixel;
+  
+  
+  wire [15:0] adrX;
+  wire [15:0] adrY;
+  
+  wire [16:0] rasterAddress = (adrY*320) + adrX;
+  reg [15:0] xColor = 15'hC0;
 
 
-	wire [7:0] r8;
-	wire [7:0] g8;
-	wire [7:0] b8;
-	
-	wire [15:0] rasterColor = ((b8 >> 3) & 5'h1F) | (((g8 >> 2) & 6'h3f) << 5) | (((r8 >> 3) & 5'h1f) << 11);
-	
-	reg [5:0] drawCounter = 0;
-	wire drawCmd = ~KEY[0] ? drawCounter[5] : 0;
-	always @(posedge CLOCK_50)
-	begin
-		drawCounter <= drawCounter + 3;
-	end
-	
-	reg enableVertexColor =0;
-	
-	always @(negedge KEY[2])
-	begin
-		enableVertexColor <= !enableVertexColor;
-	end
-	
-	TriRasterEngine tre(
-		.i_clk(CLOCK_50),
-		.i_reset(~KEY[3]),
-		.i_draw(drawCmd),
-		.i_v1_x(x1),
-		.i_v1_y(y1),
-		.i_v1_r(enableVertexColor ? r1 : 0),
-		.i_v1_g(enableVertexColor ? g1 : 0),
-		.i_v1_b(enableVertexColor ? b1 : 0),
-		.i_v1_u(9'd0),
-		.i_v1_v(9'd0),
+  wire [7:0] r8;
+  wire [7:0] g8;
+  wire [7:0] b8;
+  
+  wire [15:0] rasterColor = ((b8 >> 3) & 5'h1F) | (((g8 >> 2) & 6'h3f) << 5) | (((r8 >> 3) & 5'h1f) << 11);
+  
+  reg [5:0] drawCounter = 0;
+  wire drawCmd = ~KEY[0] ? drawCounter[5] : 0;
+  always @(posedge CLOCK_50)
+  begin
+    drawCounter <= drawCounter + 3;
+  end
+  
+  reg enableVertexColor =0;
+  
+  always @(negedge KEY[2])
+  begin
+    enableVertexColor <= !enableVertexColor;
+  end
+  
+  TriRasterEngine tre(
+    .i_clk          (CLOCK_50),
+    .i_reset        (~KEY[3]),
+    .i_draw         (drawCmd),
+    .i_v1_x         (x1),
+    .i_v1_y         (y1),
+    .i_v1_r         (enableVertexColor ? r1 : 0),
+    .i_v1_g         (enableVertexColor ? g1 : 0),
+    .i_v1_b         (enableVertexColor ? b1 : 0),
+    .i_v1_u         (9'd0),
+    .i_v1_v         (9'd0),
 
-		.i_v2_x(x2),
-		.i_v2_y(y2),
-		.i_v2_r(enableVertexColor ? r2 : 0),
-		.i_v2_g(enableVertexColor ? g2 : 0),
-		.i_v2_b(enableVertexColor ? b2 : 0),
-		.i_v2_u(9'd0),
-		.i_v2_v(9'd127),
+    .i_v2_x         (x2),
+    .i_v2_y         (y2),
+    .i_v2_r         (enableVertexColor ? r2 : 0),
+    .i_v2_g         (enableVertexColor ? g2 : 0),
+    .i_v2_b         (enableVertexColor ? b2 : 0),
+    .i_v2_u         (9'd0),
+    .i_v2_v         (9'd127),
 
-		.i_v3_x(x3),
-		.i_v3_y(y3),
-		.i_v3_r(enableVertexColor ? r3 : 0),
-		.i_v3_g(enableVertexColor ? g3 : 0),
-		.i_v3_b(enableVertexColor ? b3 : 0),
-		.i_v3_u(9'd127),
-		.i_v3_v(9'd127),
+    .i_v3_x         (x3),
+    .i_v3_y         (y3),
+    .i_v3_r         (enableVertexColor ? r3 : 0),
+    .i_v3_g         (enableVertexColor ? g3 : 0),
+    .i_v3_b         (enableVertexColor ? b3 : 0),
+    .i_v3_u         (9'd127),
+    .i_v3_v         (9'd127),
 
-		.o_color_r(r8),
-		.o_color_g(g8),
-		.o_color_b(b8),
-		.o_x(adrX),
-		.o_y(adrY),
-		.o_write_pixel(writePixel),
-		.o_busy(LEDR[0]),
-		.o_done(LEDR[1])
-	);
-	
-	
-	
-	//=======================================================
-	
-	wire [4:0] rng;
-	wire [4:0] rng2;
-	reg [4:0] rv1 = 0;
-	reg [4:0] rv2 = 0; 
-	reg [4:0] rv3 = 0;
-	reg [4:0] rv4 = 0;
-	lfsr_5bit xrng(
-		.i_clk			(CLOCK_50),
-		.i_reset		   (KEY[3]),
-		.o_data			(rng)
-	);
-	lfsr_5bit #(5'h33) xrng2(
-		.i_clk			(CLOCK_50),
-		.i_reset		   (KEY[3]),
-		.o_data			(rng2)
-	);
-	
-	always @(posedge CLOCK_50)
-	begin
-		rv1 <= rng;
-		rv2 <= rng2;
-		rv3 <= rv2;
-		rv4 <= rv1+rv2;
-		
-		x1 <= rv1 * 8;
-		x2 <= rv2 * 8 + 1;
-		x3 <= rv3 * 8 + 2;
-		y1 <= rv4 * 8 + 3;
-		y2 <= rv3 * 8 + 4;
-		y3 <= rv1 * 8 + 5;
-		
-		
-		r1 <= r1 + rv1;
-		r2 <= r2 + rv2;
-		r3 <= r3 + rv4;
+    .o_color_r      (r8),
+    .o_color_g      (g8),
+    .o_color_b      (b8),
+    .o_x            (adrX),
+    .o_y            (adrY),
+    .o_write_pixel  (writePixel),
+    .o_busy         (LEDR[0]),
+    .o_done         (LEDR[1])
+  );
+  
+  
+  
+  //=======================================================
+  
+  wire [4:0] rng;
+  wire [4:0] rng2;
+  reg [4:0] rv1 = 0;
+  reg [4:0] rv2 = 0; 
+  reg [4:0] rv3 = 0;
+  reg [4:0] rv4 = 0;
+  lfsr_5bit #(5'h3F) xrng(
+    .i_clk      (CLOCK_50),
+    .i_reset    (KEY[3]),
+    .o_data     (rng)
+  );
+  lfsr_5bit #(5'h16) xrng2(
+    .i_clk      (CLOCK_50),
+    .i_reset    (KEY[3]),
+    .o_data     (rng2)
+  );
+  
+  always @(posedge CLOCK_50)
+  begin
+    rv1 <= rng;
+    rv2 <= rng2;
+    rv3 <= rv2;
+    rv4 <= rv1+rv2;
+    
+    x1 <= rv1 * 8;
+    x2 <= rv2 * 8 + 1;
+    x3 <= rv3 * 8 + 2;
+    y1 <= rv4 * 8 + 3;
+    y2 <= rv3 * 8 + 4;
+    y3 <= rv1 * 8 + 5;
+    
+    
+    r1 <= r1 + rv1;
+    r2 <= r2 + rv2;
+    r3 <= r3 + rv4;
 
-		g1 <= g1 + rv3;
-		g2 <= g2 + rv1;
-		g3 <= g3 + rv4;
+    g1 <= g1 + rv3;
+    g2 <= g2 + rv1;
+    g3 <= g3 + rv4;
 
-		b1 <= b1 + rv1;
-		b2 <= b2 + rv4;
-		b3 <= b3 + rv3;
-		//xColor <= xColor + 16'h50;
-		
-	end
-	
-	
-	assign HEX0 = rasterAddress;
-	assign HEX1 = writePixel;
-	VRAM vram(
-		.clk(clk25), 		.address(vram_pix_address),	.dataOut(wpixel), 			.writeEnable(1'b0), .dataIn(16'b0),
-		.clk2(CLOCK_50),	.address2(rasterAddress),		.writeEnable2(writePixel), .dataIn2(rasterColor)
-	);
-	
-	always @(posedge clk25)
-	begin
-		if (y == 0)
-		begin
-			vram_row_address <= 0;
-			vram_pix_address <= 0;
-		end
-		if (xmax)
-		begin
-			if (y[0])
-				vram_row_address <= vram_row_address + 320;
-			vram_pix_address <= vram_row_address;
-		end
-		
-		if (visible)
-		begin
-			pixel <= wpixel;
-			r_color <= (({3'b0, pixel[15:11]} * 527 + 23) >> 6);
-			g_color <= (({3'b0, pixel[10: 5]} * 259 + 33) >> 6);
-			b_color <= (({3'b0, pixel[ 4: 0]} * 527 + 23) >> 6);
-			
-			if (x[0])
-				vram_pix_address <= vram_pix_address + 1;
-		end
-		else
-		begin
-			r_color <= 5'b0;
-			g_color <= 6'b0;
-			b_color <= 5'b0;
-		end
-	end
+    b1 <= b1 + rv1;
+    b2 <= b2 + rv4;
+    b3 <= b3 + rv3;
+    //xColor <= xColor + 16'h50;
+    
+  end
+  
+  
+  assign HEX0 = rasterAddress;
+  assign HEX1 = writePixel;
+  VRAM vram(
+    .clk            (clk25),
+    .address        (vram_pix_address),
+    .dataOut        (wpixel),
+    .writeEnable    (1'b0),
+    .dataIn         (16'b0),
+    .clk2           (CLOCK_50),
+    .address2       (rasterAddress),
+    .writeEnable2   (writePixel),
+    .dataIn2        (rasterColor)
+  );
+  
+  always @(posedge clk25)
+  begin
+    if (y == 0)
+    begin
+      vram_row_address <= 0;
+      vram_pix_address <= 0;
+    end
+    if (xmax)
+    begin
+      if (y[0])
+        vram_row_address <= vram_row_address + 320;
+      vram_pix_address <= vram_row_address;
+    end
+    
+    if (visible)
+    begin
+      pixel <= wpixel;
+      r_color <= (({3'b0, pixel[15:11]} * 527 + 23) >> 6);
+      g_color <= (({3'b0, pixel[10: 5]} * 259 + 33) >> 6);
+      b_color <= (({3'b0, pixel[ 4: 0]} * 527 + 23) >> 6);
+      
+      if (x[0])
+        vram_pix_address <= vram_pix_address + 1;
+    end
+    else
+    begin
+      r_color <= 5'b0;
+      g_color <= 6'b0;
+      b_color <= 5'b0;
+    end
+  end
 endmodule
 
 
