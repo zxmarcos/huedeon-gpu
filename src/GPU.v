@@ -11,41 +11,37 @@ module GPU(
 
   //////////// CLOCK //////////
   input                   CLOCK_50,
-/*
-  input                   CLOCK2_50,
-  input                   CLOCK3_50,
-  input                   CLOCK4_50,
 
   //////////// SDRAM //////////
-  output        [12:0]    DRAM_ADDR,
-  output         [1:0]    DRAM_BA,
-  output                  DRAM_CAS_N,
-  output                  DRAM_CKE,
-  output                  DRAM_CLK,
-  output                  DRAM_CS_N,
-  inout         [15:0]    DRAM_DQ,
-  output                  DRAM_LDQM,
-  output                  DRAM_RAS_N,
-  output                  DRAM_UDQM,
-  output                  DRAM_WE_N,
-*/
+  // output        [12:0]    DRAM_ADDR,
+  // output         [1:0]    DRAM_BA,
+  // output                  DRAM_CAS_N,
+  // output                  DRAM_CKE,
+  // output                  DRAM_CLK,
+  // output                  DRAM_CS_N,
+  // inout         [15:0]    DRAM_DQ,
+  // output                  DRAM_LDQM,
+  // output                  DRAM_RAS_N,
+  // output                  DRAM_UDQM,
+  // output                  DRAM_WE_N,
+
   //////////// SEG7 //////////
   output         [6:0]    HEX0,
   output         [6:0]    HEX1,
-  output         [6:0]    HEX2,
-  output         [6:0]    HEX3,
-  output         [6:0]    HEX4,
-  output         [6:0]    HEX5,
+  // output         [6:0]    HEX2,
+  // output         [6:0]    HEX3,
+  // output         [6:0]    HEX4,
+  // output         [6:0]    HEX5,
 
   //////////// KEY //////////
   input          [3:0]    KEY,
 
   //////////// LED //////////
   output         [9:0]    LEDR,
-/*
+
   //////////// SW //////////
-  input          [9:0]    SW,
-*/
+  // input          [9:0]    SW,
+
   //////////// VGA //////////
   output         [7:0]    VGA_B,
   output                  VGA_BLANK_N,
@@ -60,42 +56,7 @@ module GPU(
   
   CLKDivider clkdiv(.clk(CLOCK_50), .clkdiv2(clk25), .clkdiv16(clk4));
   
-  wire [9:0] x;
-  wire [9:0] y;
-  wire hsync, vsync, visible;
-  wire xmax, ymax;
-  
-  reg [7:0] r_color;
-  reg [7:0] g_color;
-  reg [7:0] b_color;
-  
-  assign VGA_R = r_color;
-  assign VGA_B = b_color;
-  assign VGA_G = g_color;
-  assign VGA_BLANK_N = 1'b1;
-  assign VGA_SYNC_N = 1'b0;
-  assign VGA_HS = hsync;
-  assign VGA_VS = vsync;
-  assign VGA_CLK = clk25;
-  
-  VGAEncoder vga(
-    .clk(clk25),
-    .x(x),
-    .y(y),
-    .hsync(hsync),
-    .vsync(vsync),
-    .visible(visible),
-    .xmax(xmax),
-    .ymax(ymax)
-  );
-  
-  
-
-  reg [16:0] vram_pix_address;
-  reg [16:0] vram_row_address;
-  reg [15:0] pixel;
-  wire [15:0] wpixel;
-  
+ 
   //=======================================================
   
   reg signed [13:0] x1 = 10;
@@ -119,70 +80,62 @@ module GPU(
   
   
 
-  wire writePixel;
+  wire write_pixel;
   
   
-  wire [15:0] adrX;
-  wire [15:0] adrY;
+  wire [15:0] vram_address_x;
+  wire [15:0] vram_address_y;
   
-  wire [16:0] rasterAddress = (adrY*320) + adrX;
-  reg [15:0] xColor = 15'hC0;
-
+  wire [16:0] raster_address = (vram_address_y*320) + vram_address_x;
 
   wire [7:0] r8;
   wire [7:0] g8;
   wire [7:0] b8;
   
-  wire [15:0] rasterColor = ((b8 >> 3) & 5'h1F) | (((g8 >> 2) & 6'h3f) << 5) | (((r8 >> 3) & 5'h1f) << 11);
+  wire [15:0] raster_color = ((b8 >> 3) & 5'h1F) | (((g8 >> 2) & 6'h3f) << 5) | (((r8 >> 3) & 5'h1f) << 11);
   
-  reg [5:0] drawCounter = 0;
-  wire drawCmd = ~KEY[0] ? drawCounter[5] : 0;
-  always @(posedge CLOCK_50)
-  begin
-    drawCounter <= drawCounter + 3;
-  end
-  
-  reg enableVertexColor =0;
+  wire draw_enable = ~KEY[0];
+  reg enable_vertex_color =0;
   
   always @(negedge KEY[2])
   begin
-    enableVertexColor <= !enableVertexColor;
+    enable_vertex_color <= !enable_vertex_color;
   end
   
   TriRasterEngine tre(
     .i_clk          (CLOCK_50),
     .i_reset        (~KEY[3]),
-    .i_draw         (drawCmd),
+    .i_draw         (draw_enable),
     .i_v1_x         (x1),
     .i_v1_y         (y1),
-    .i_v1_r         (enableVertexColor ? r1 : 0),
-    .i_v1_g         (enableVertexColor ? g1 : 0),
-    .i_v1_b         (enableVertexColor ? b1 : 0),
+    .i_v1_r         (enable_vertex_color ? r1 : 0),
+    .i_v1_g         (enable_vertex_color ? g1 : 0),
+    .i_v1_b         (enable_vertex_color ? b1 : 0),
     .i_v1_u         (9'd0),
     .i_v1_v         (9'd0),
 
     .i_v2_x         (x2),
     .i_v2_y         (y2),
-    .i_v2_r         (enableVertexColor ? r2 : 0),
-    .i_v2_g         (enableVertexColor ? g2 : 0),
-    .i_v2_b         (enableVertexColor ? b2 : 0),
+    .i_v2_r         (enable_vertex_color ? r2 : 0),
+    .i_v2_g         (enable_vertex_color ? g2 : 0),
+    .i_v2_b         (enable_vertex_color ? b2 : 0),
     .i_v2_u         (9'd0),
     .i_v2_v         (9'd127),
 
     .i_v3_x         (x3),
     .i_v3_y         (y3),
-    .i_v3_r         (enableVertexColor ? r3 : 0),
-    .i_v3_g         (enableVertexColor ? g3 : 0),
-    .i_v3_b         (enableVertexColor ? b3 : 0),
+    .i_v3_r         (enable_vertex_color ? r3 : 0),
+    .i_v3_g         (enable_vertex_color ? g3 : 0),
+    .i_v3_b         (enable_vertex_color ? b3 : 0),
     .i_v3_u         (9'd127),
     .i_v3_v         (9'd127),
 
     .o_color_r      (r8),
     .o_color_g      (g8),
     .o_color_b      (b8),
-    .o_x            (adrX),
-    .o_y            (adrY),
-    .o_write_pixel  (writePixel),
+    .o_x            (vram_address_x),
+    .o_y            (vram_address_y),
+    .o_write_pixel  (write_pixel),
     .o_busy         (LEDR[0]),
     .o_done         (LEDR[1])
   );
@@ -197,12 +150,12 @@ module GPU(
   reg [4:0] rv2 = 0; 
   reg [4:0] rv3 = 0;
   reg [4:0] rv4 = 0;
-  lfsr_5bit #(5'h3F) xrng(
+  lfsr_5bit #(5'h1F) xrng(
     .i_clk      (CLOCK_50),
     .i_reset    (KEY[3]),
     .o_data     (rng)
   );
-  lfsr_5bit #(5'h16) xrng2(
+  lfsr_5bit #(5'h11) xrng2(
     .i_clk      (CLOCK_50),
     .i_reset    (KEY[3]),
     .o_data     (rng2)
@@ -224,66 +177,56 @@ module GPU(
     
     
     r1 <= r1 + rv1;
-    r2 <= r2 + rv2;
+    r2 <= r2 - rv2;
     r3 <= r3 + rv4;
 
-    g1 <= g1 + rv3;
+    g1 <= g1 - rv3;
     g2 <= g2 + rv1;
     g3 <= g3 + rv4;
 
     b1 <= b1 + rv1;
     b2 <= b2 + rv4;
-    b3 <= b3 + rv3;
-    //xColor <= xColor + 16'h50;
-    
+    b3 <= b3 - rv3;
+
   end
   
   
-  assign HEX0 = rasterAddress;
-  assign HEX1 = writePixel;
+  assign HEX0 = raster_address;
+  assign HEX1 = write_pixel;
+
+  wire [15:0] fb_vram_address;
+  wire [15:0] fb_pixel;
+
   VRAM vram(
-    .clk            (clk25),
-    .address        (vram_pix_address),
-    .dataOut        (wpixel),
-    .writeEnable    (1'b0),
-    .dataIn         (16'b0),
-    .clk2           (CLOCK_50),
-    .address2       (rasterAddress),
-    .writeEnable2   (writePixel),
-    .dataIn2        (rasterColor)
+    // framebuffer
+    .i_a_clk          (clk25),
+    .i_a_address      (fb_vram_address),
+    .i_a_write_enable (1'b0),
+    .i_a_wr_data      (16'b0),
+    .o_a_rd_data      (fb_pixel),
+
+    // gpu
+    .i_b_clk          (CLOCK_50),
+    .i_b_address      (raster_address),
+    .i_b_write_enable (write_pixel),
+    .i_b_wr_data      (raster_color)
   );
   
-  always @(posedge clk25)
-  begin
-    if (y == 0)
-    begin
-      vram_row_address <= 0;
-      vram_pix_address <= 0;
-    end
-    if (xmax)
-    begin
-      if (y[0])
-        vram_row_address <= vram_row_address + 320;
-      vram_pix_address <= vram_row_address;
-    end
-    
-    if (visible)
-    begin
-      pixel <= wpixel;
-      r_color <= (({3'b0, pixel[15:11]} * 527 + 23) >> 6);
-      g_color <= (({3'b0, pixel[10: 5]} * 259 + 33) >> 6);
-      b_color <= (({3'b0, pixel[ 4: 0]} * 527 + 23) >> 6);
-      
-      if (x[0])
-        vram_pix_address <= vram_pix_address + 1;
-    end
-    else
-    begin
-      r_color <= 5'b0;
-      g_color <= 6'b0;
-      b_color <= 5'b0;
-    end
-  end
+
+  VGAFramebuffer vga_fb(
+    .i_clk          (clk25),
+    .i_pixel        (fb_pixel),
+    .o_address      (fb_vram_address),
+    .o_vga_clk      (VGA_CLK),
+    .o_vga_r        (VGA_R),
+    .o_vga_g        (VGA_G),
+    .o_vga_b        (VGA_B),
+    .o_vga_blank_n  (VGA_BLANK_N),
+    .o_vga_sync_n   (VGA_SYNC_N),
+    .o_vga_hs       (VGA_HS),
+    .o_vga_vs       (VGA_VS),
+  );
+  
 endmodule
 
 

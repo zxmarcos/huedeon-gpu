@@ -1,37 +1,40 @@
-
+/*
+ * Copyright (c) 2021, Marcos Medeiros
+ * Licensed under BSD 3-clause.
+ */
 module VRAM(
-	input clk,
-	input [16:0] address,
-	input writeEnable,
-	input [15:0] dataIn,
-	output reg [15:0] dataOut,
-	
-	
-	input clk2,
-	input [16:0] address2,
-	input writeEnable2,
-	input [15:0] dataIn2,
-	output reg [15:0] dataOut2
+  input               i_a_clk,
+  input [16:0]        i_a_address,
+  input               i_a_write_enable,
+  input [15:0]        i_a_wr_data,
+  output reg [15:0]   o_a_rd_data,
+    
+  input               i_b_clk,
+  input [16:0]        i_b_address,
+  input               i_b_write_enable,
+  input [15:0]        i_b_wr_data,
+  output reg [15:0]   o_b_rd_data
 );
-	reg [15:0] VRAM[0:320*240-1];// /* synthesis ram_init_file = "src/vram.mif" */;
-	
-	//initial begin
-	//	$readmemh("riscvlogo.mem", VRAM);
-	//end
+  reg [15:0] VRAM[0:320*240-1];// /* synthesis ram_init_file = "vram.mif" */;
+  
+  //initial begin
+  //  $readmemh("riscvlogo.mem", VRAM);
+  //end
 
-	always @(posedge clk)
-	begin
-		if (writeEnable)
-			VRAM[address] <= dataIn;
-		else
-			dataOut <= VRAM[address];
-	end
-	
-	always @(posedge clk2)
-	begin
-		if (writeEnable2)
-			VRAM[address2] <= dataIn2;
-		else
-			dataOut2 <= VRAM[address2];
-	end
+  always @(posedge i_a_clk)
+  begin
+    if (i_a_write_enable)
+      VRAM[i_a_address] <= i_a_wr_data;
+    else
+      o_a_rd_data <= VRAM[i_a_address];
+  end
+  
+  always @(posedge i_b_clk)
+  begin
+    if (i_b_write_enable)
+      VRAM[i_b_address] <= i_b_wr_data;
+    else
+      o_b_rd_data <= VRAM[i_b_address];
+  end
+
 endmodule
