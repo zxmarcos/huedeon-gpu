@@ -156,6 +156,7 @@ module TriRasterEngine #(parameter XLEN=`FIXPT_REAL_BITS - 1)
       ST_IDLE: begin
         if (i_draw)
         begin
+          o_done <= 0;
           // Latch inputs...
           v1_x <= `FIXPT_INT(i_v1_x); v1_y <= `FIXPT_INT(i_v1_y); v1_z <= `FIXPT_INT(i_v1_z);
           v1_u <= `FIXPT_INT(i_v1_u); v1_v <= `FIXPT_INT(i_v1_v);
@@ -195,6 +196,7 @@ module TriRasterEngine #(parameter XLEN=`FIXPT_REAL_BITS - 1)
         if (bounding_box_end)
         begin
           state <= ST_IDLE;
+          o_done <= 1;
           req_next_pixel <= 0;
         end
         else
