@@ -10,29 +10,29 @@ module TriRasterEngine #(parameter XLEN=`FIXPT_REAL_BITS - 1)
   input                     i_reset,
   input                     i_draw,
 
-  input signed [XLEN:0]     i_v1_x,
-  input signed [XLEN:0]     i_v1_y,
-  input signed [XLEN:0]     i_v1_z,
-  input signed [8:0]        i_v1_u,
-  input signed [8:0]        i_v1_v,
+  input `FIXPT              i_v1_x,
+  input `FIXPT              i_v1_y,
+  input `FIXPT              i_v1_z,
+  input signed [15:0]       i_v1_u,
+  input signed [15:0]       i_v1_v,
   input [7:0]               i_v1_r,
   input [7:0]               i_v1_g,
   input [7:0]               i_v1_b,
 
-  input signed [XLEN:0]     i_v2_x,
-  input signed [XLEN:0]     i_v2_y,
-  input signed [XLEN:0]     i_v2_z,
-  input signed [8:0]        i_v2_u,
-  input signed [8:0]        i_v2_v,
+  input `FIXPT              i_v2_x,
+  input `FIXPT              i_v2_y,
+  input `FIXPT              i_v2_z,
+  input signed [15:0]       i_v2_u,
+  input signed [15:0]       i_v2_v,
   input [7:0]               i_v2_r,
   input [7:0]               i_v2_g,
   input [7:0]               i_v2_b,
 
-  input signed [XLEN:0]     i_v3_x,
-  input signed [XLEN:0]     i_v3_y,
-  input signed [XLEN:0]     i_v3_z,
-  input signed [8:0]        i_v3_u,
-  input signed [8:0]        i_v3_v,
+  input `FIXPT              i_v3_x,
+  input `FIXPT              i_v3_y,
+  input `FIXPT              i_v3_z,
+  input signed [15:0]       i_v3_u,
+  input signed [15:0]       i_v3_v,
   input [7:0]               i_v3_r,
   input [7:0]               i_v3_g,
   input [7:0]               i_v3_b,
@@ -158,15 +158,15 @@ module TriRasterEngine #(parameter XLEN=`FIXPT_REAL_BITS - 1)
         begin
           o_done <= 0;
           // Latch inputs...
-          v1_x <= `FIXPT_INT(i_v1_x); v1_y <= `FIXPT_INT(i_v1_y); v1_z <= `FIXPT_INT(i_v1_z);
+          v1_x <= i_v1_x;             v1_y <= i_v1_y;             v1_z <= i_v1_z;
           v1_u <= `FIXPT_INT(i_v1_u); v1_v <= `FIXPT_INT(i_v1_v);
           v1_r <= i_v1_r;             v1_g <= i_v1_g;             v1_b <= i_v1_b;
 
-          v2_x <= `FIXPT_INT(i_v2_x); v2_y <= `FIXPT_INT(i_v2_y); v2_z <= `FIXPT_INT(i_v2_z);
+          v2_x <= i_v2_x;             v2_y <= i_v2_y;             v2_z <= i_v2_z;
           v2_u <= `FIXPT_INT(i_v2_u); v2_v <= `FIXPT_INT(i_v2_v);
           v2_r <= i_v2_r;             v2_g <= i_v2_g;             v2_b <= i_v2_b;
 
-          v3_x <= `FIXPT_INT(i_v3_x); v3_y <= `FIXPT_INT(i_v3_y); v3_z <= `FIXPT_INT(i_v3_z);
+          v3_x <= i_v3_x;             v3_y <= i_v3_y;             v3_z <= i_v3_z;
           v3_u <= `FIXPT_INT(i_v3_u); v3_v <= `FIXPT_INT(i_v3_v);
           v3_r <= i_v3_r;             v3_g <= i_v3_g;             v3_b <= i_v3_b;
 

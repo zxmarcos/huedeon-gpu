@@ -59,12 +59,12 @@ module GPU(
  
   //=======================================================
   
-  reg signed [13:0] x1 = 10;
-  reg signed [13:0] y1 = 10;
-  reg signed [13:0] x2 = 50;
-  reg signed [13:0] y2 = 200;
-  reg signed [13:0] x3 = 300;
-  reg signed [13:0] y3 = 140;
+  reg `FIXPT x1 = `FIXPT_INT(10'd10);
+  reg `FIXPT y1 = `FIXPT_INT(10'd10);
+  reg `FIXPT x2 = `FIXPT_INT(10'd50);
+  reg `FIXPT y2 = `FIXPT_INT(10'd200);
+  reg `FIXPT x3 = `FIXPT_INT(10'd300);
+  reg `FIXPT y3 = `FIXPT_INT(10'd140);
 
   reg [7:0] r1 = 255;
   reg [7:0] r2 = 120;
@@ -168,12 +168,12 @@ module GPU(
     rv3 <= rv2;
     rv4 <= rv1+rv2;
     
-    x1 <= rv1 * 8;
-    x2 <= rv2 * 8 + 1;
-    x3 <= rv3 * 8 + 2;
-    y1 <= rv4 * 8 + 3;
-    y2 <= rv3 * 8 + 4;
-    y3 <= rv1 * 8 + 5;
+    x1 <= `FIXPT_INT(rv1 * 8);
+    x2 <= `FIXPT_INT(rv2 * 8 + 1);
+    x3 <= `FIXPT_INT(rv3 * 8 + 2);
+    y1 <= `FIXPT_INT(rv4 * 8 + 3);
+    y2 <= `FIXPT_INT(rv3 * 8 + 4);
+    y3 <= `FIXPT_INT(rv1 * 8 + 5);
     
     
     r1 <= r1 + rv1;
