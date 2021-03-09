@@ -86,7 +86,7 @@ module GPU(
   wire [15:0] vram_address_x;
   wire [15:0] vram_address_y;
   
-  wire [16:0] raster_address = (vram_address_y*320) + vram_address_x;
+  wire [17:0] raster_address = (vram_address_y*320) + vram_address_x;
 
   wire [7:0] r8;
   wire [7:0] g8;
@@ -224,7 +224,7 @@ module GPU(
     .o_vga_blank_n  (VGA_BLANK_N),
     .o_vga_sync_n   (VGA_SYNC_N),
     .o_vga_hs       (VGA_HS),
-    .o_vga_vs       (VGA_VS),
+    .o_vga_vs       (VGA_VS)
   );
   
 endmodule

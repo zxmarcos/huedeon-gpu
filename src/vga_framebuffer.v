@@ -5,7 +5,8 @@
 module VGAFramebuffer(
   input               i_clk,
   input [15:0]        i_pixel,
-  output [15:0]       o_address,
+  input [17:0]        i_display_offset,
+  output [17:0]       o_address,
   output wire         o_vga_clk,
   output wire [7:0]   o_vga_r,
   output wire [7:0]   o_vga_g,
@@ -15,11 +16,12 @@ module VGAFramebuffer(
   output wire         o_vga_hs,
   output wire         o_vga_vs
 );
-  reg [16:0] vram_pix_address;
-  reg [16:0] vram_row_address;
+  reg [17:0] vram_pix_address;
+  reg [17:0] vram_row_address;
   reg [15:0] pixel;
+  reg [17:0] display_offset = 0;
 
-  assign o_address = vram_pix_address;
+  assign o_address = display_offset + vram_pix_address;
 
   wire [9:0] x;
   wire [9:0] y;
@@ -29,6 +31,7 @@ module VGAFramebuffer(
   reg [7:0] r_color;
   reg [7:0] g_color;
   reg [7:0] b_color;
+
   
   assign o_vga_r = r_color;
   assign o_vga_b = b_color;
@@ -54,6 +57,8 @@ module VGAFramebuffer(
   begin
     if (y == 0)
     begin
+      // Update display offset on first pixel of frame
+      display_offset   <= i_display_offset;
       vram_row_address <= 0;
       vram_pix_address <= 0;
     end
