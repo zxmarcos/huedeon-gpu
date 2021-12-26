@@ -76,3 +76,5 @@ RISCV_SOC.htm
 c5_pin_model_dump.text
 *.bin
 .vs/
+build
+fusesoc.conf

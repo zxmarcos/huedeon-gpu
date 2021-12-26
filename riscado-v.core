@@ -1,0 +1,33 @@
+CAPI=2:
+name: zxmarcos:huedeon:riscado-v:0.0.1
+description: Huedeon GPU RISC-V
+
+filesets:
+  rtl:
+    files:
+      - src/riscado-v/alu.v
+      - src/riscado-v/control_unit.v
+      - src/riscado-v/load_store.v
+      - src/riscado-v/program_counter.v
+      - src/riscado-v/ram.v
+      - src/riscado-v/register_file.v
+      - src/riscado-v/riscv.v
+      - src/riscado-v/riscvdefs.vh: {is_include_file: true}
+      - src/riscado-v/rom.v
+      - src/riscado-v/gcc/rom.mif: {is_include_file: true, copyto: ../src/riscado-v/gcc/rom.mif}
+      - src/riscado-v/gcc/rom.mem: {is_include_file: true}
+    file_type: verilogSource
+
+targets:
+  # The "default" target is special in FuseSoC and used in dependencies.
+  # The "&default" is a YAML anchor referenced later.
+  default: &default
+    filesets:
+      - rtl
+    toplevel: CPU
+
+# provider:
+#   name    : github
+#   user    : zxmarcos
+#   repo    : huedeon-gpu
+#   version : v0.0.1
