@@ -37,8 +37,14 @@ filesets:
   de1-soc:
     files:
       - data/de1_soc.sdc: { file_type: SDC }
-      - data/de1_soc.tcl: { file_type: tcl }
+      - data/de1_soc.qsf: { file_type: tcl }
 
+  qmtech_xc7a35t_ddr3:
+    files:
+      - data/qm_xc7a35t_ddr3.xdc: { file_type: XDC }
+  qmtech_xc7k325t_ddr3:
+    files:
+      - data/qm_xc7k325t_ddr3.xdc: { file_type: XDC }
 
 targets:
   # The "default" target is special in FuseSoC and used in dependencies.
@@ -56,6 +62,23 @@ targets:
       quartus:
         family: Cyclone V
         device: 5CSEMA5F31C6
+    toplevel: RISCV_SOC
+
+  qmtech_xc7a35t_ddr3:
+    default_tool: vivado
+    description: QMTech Artix7
+    filesets: [rtl, qmtech_xc7a35t_ddr3]
+    tools:
+      vivado: { part: xc7a35tftg256-1 }
+    toplevel: RISCV_SOC
+
+
+  qmtech_xc7k325t_ddr3:
+    default_tool: vivado
+    description: QMTech Kintex 7
+    filesets: [rtl, qmtech_xc7k325t_ddr3]
+    tools:
+      vivado: { part: xc7k325tffg676-1 }
     toplevel: RISCV_SOC
 
 # provider:
