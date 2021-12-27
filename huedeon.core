@@ -1,0 +1,88 @@
+CAPI=2:
+name: zxmarcos:huedeon:huedeon:0.0.1
+description: Huedeon GPU
+
+filesets:
+  rtl:
+    depend:
+      - zxmarcos:huedeon:riscado-v:0.0.1
+    files:
+      - src/raster_pipeline_ex1.v
+      - src/raster_pipeline_ex3.v
+      - src/edge_function.v
+      - src/tri_raster_engine.v
+      - src/edge_function_evaluator.v
+      - src/texture_ram.v
+      - src/div_uu.v
+      - src/huedeon_ctrl.v
+      - src/bbox_iterator.v
+      - src/texture_unit.v
+      - src/lfsr5.v
+      - src/RISCV_SOC.v
+      - src/clk_divider.v
+      - src/vga_framebuffer.v
+      - src/GPU.v
+      - src/vram.v
+      - src/clut_ram.v
+      - src/pipeline_ctrl.v
+      - src/vga_encoder.v
+      - src/huedeon_tb.v
+      - src/raster_pipeline_ex2.v
+      - src/fixedpt.vh: {is_include_file: true}
+      - src/data/doom-clut.mem: {is_include_file: true, copyto: data/doom-clut.mem}
+      - src/data/doom-pixmap.mem: {is_include_file: true, copyto: data/doom-pixmap.mem}
+
+    file_type: verilogSource
+
+  de1-soc:
+    files:
+      - data/de1_soc.sdc: { file_type: SDC }
+      - data/de1_soc.qsf: { file_type: tcl }
+
+  qmtech_xc7a35t_ddr3:
+    files:
+      - data/qm_xc7a35t_ddr3.xdc: { file_type: XDC }
+  qmtech_xc7k325t_ddr3:
+    files:
+      - data/qm_xc7k325t_ddr3.xdc: { file_type: XDC }
+
+targets:
+  # The "default" target is special in FuseSoC and used in dependencies.
+  # The "&default" is a YAML anchor referenced later.
+  default: &default
+    filesets:
+      - rtl
+    toplevel: RISCV_SOC
+
+  de1-soc:
+    default_tool: quartus
+    description: DE1-SOC
+    filesets: [rtl, de1-soc]
+    tools:
+      quartus:
+        family: Cyclone V
+        device: 5CSEMA5F31C6
+    toplevel: RISCV_SOC
+
+  qmtech_xc7a35t_ddr3:
+    default_tool: vivado
+    description: QMTech Artix7
+    filesets: [rtl, qmtech_xc7a35t_ddr3]
+    tools:
+      vivado: { part: xc7a35tftg256-1 }
+    toplevel: RISCV_SOC
+
+
+  qmtech_xc7k325t_ddr3:
+    default_tool: vivado
+    description: QMTech Kintex 7
+    filesets: [rtl, qmtech_xc7k325t_ddr3]
+    tools:
+      vivado: { part: xc7k325tffg676-1 }
+    toplevel: RISCV_SOC
+
+# provider:
+#   name    : github
+#   user    : zxmarcos
+#   repo    : huedeon-gpu
+#   version : v0.0.1

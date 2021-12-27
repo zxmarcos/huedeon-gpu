@@ -11,15 +11,14 @@ module ROM(
   output reg [31:0] dataOut
 );
   parameter LEN = 10000;
-  //parameter filePath = "D:/dev/DE1-SOC/Tools/SystemBuilder/CodeGenerated/DE1_SOC/RISCV_GPU_SOC/gcc/rom.mem";
-  
+
   reg [31:0] memory[0:LEN-1] /* synthesis ram_init_file = "../src/riscado-v/gcc/rom.mif" */;
   wire [30:0] daddr = address[31:2];
-  
-  //initial begin
-  //  $readmemh(filePath, memory);
-  //end
-  
+
+  initial begin
+   $readmemh("src/riscado-v/gcc/rom.mem", memory);
+  end
+
   // Acesso a memória.
   always @(posedge clk)
   begin
@@ -29,4 +28,3 @@ module ROM(
     end
   end
 endmodule
-  
