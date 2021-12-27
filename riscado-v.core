@@ -15,7 +15,7 @@ filesets:
       - src/riscado-v/riscvdefs.vh: {is_include_file: true}
       - src/riscado-v/rom.v
       - src/riscado-v/gcc/rom.mif: {is_include_file: true, copyto: ../src/riscado-v/gcc/rom.mif}
-      - src/riscado-v/gcc/rom.mem: {is_include_file: true}
+      - src/riscado-v/gcc/rom.mem: {is_include_file: true, copyto: src/riscado-v/gcc/rom.mem}
     file_type: verilogSource
 
 targets:

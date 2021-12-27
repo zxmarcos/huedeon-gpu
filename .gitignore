@@ -78,3 +78,5 @@ c5_pin_model_dump.text
 .vs/
 build
 fusesoc.conf
+*.jou
+*.log
